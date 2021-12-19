@@ -20,14 +20,14 @@ public class VideoPlayer extends AppCompatActivity implements MediaPlayer.OnComp
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_video_player);
 
         playRandomVideo();
 
     }
 
     public void playRandomVideo() {
-        VideoView videoView = (VideoView) findViewById(R.id.videoView);
+        VideoView videoView = (VideoView) findViewById(R.id.videoView2);
         MediaController mediaController = new MediaController(this);
         mediaController.setAnchorView(videoView);
         mediaController.setMediaPlayer(videoView);
