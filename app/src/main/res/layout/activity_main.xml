@@ -56,7 +56,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/publishButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -71,12 +71,13 @@
                 app:cornerRadius="10dp" />
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/exploreButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/home_button"
                 android:backgroundTint="#FFFFFF"
+                android:onClick="goMapsActivity"
                 android:paddingTop="18dp"
                 android:paddingBottom="18dp"
                 android:text="Explore In Map"
@@ -92,6 +93,7 @@
                 android:layout_marginBottom="8dp"
                 android:background="#00FFFFFF"
                 android:backgroundTint="#00FFFFFF"
+                android:onClick="onClickPublishButton"
                 android:text="Submit Your Window"
                 android:textAllCaps="false"
                 android:textSize="18sp" />
