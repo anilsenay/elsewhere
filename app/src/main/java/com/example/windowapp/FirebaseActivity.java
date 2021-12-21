@@ -24,18 +24,17 @@ public class FirebaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        ArrayList<String> cityList = new ArrayList<>();
-        ArrayList<String> countryList = new ArrayList<>();
-        ArrayList<String> videoList = new ArrayList<>();
+        ArrayList<Video> videoList = new ArrayList<>();
 
-        db.collection("City")
+        db.collection("Video")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => cities " + document.getData().get("name"));
+                                Video video = document.toObject(Video.class);
+                                videoList.add(video);
                             }
                         } else {
                             Log.w(TAG, "Error getting documents.", task.getException());
