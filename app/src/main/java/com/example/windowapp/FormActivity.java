@@ -3,22 +3,33 @@ package com.example.windowapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +46,15 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     FirebaseFirestore db;
     Spinner citySpinner;
     String selectedCity, selectedCountry;
+    Button publishButton;
+    Uri selectedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
+
+        publishButton = (Button) findViewById(R.id.publishButton);
 
         Spinner countrySpinner = findViewById(R.id.countrySpinner);
         countrySpinner.setOnItemSelectedListener(this);
@@ -77,7 +92,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         cityAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.spinner, R.id.spinnerText, cities);
         citySpinner.setAdapter(cityAdapter);
 
-        Uri selectedVideo = (Uri) getIntent().getExtras().get("SELECTED_VIDEO");
+        selectedVideo = (Uri) getIntent().getExtras().get("SELECTED_VIDEO");
         System.out.println(selectedVideo);
 
     }
@@ -134,15 +149,15 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void onPublish(View view) {
-        if(selectedCity.length() > 0 && selectedCountry.length() > 0) {
-            // video upload
-            // then get video info (url, aspectratio)
-            // video.put("url", url);
-            // video.put("aspect_ratio", aspect_ratio);
+        uploadVideo(selectedVideo);
+    }
 
+    public void createVideoObject(String videoUrl) {
+        if(selectedCity.length() > 0 && selectedCountry.length() > 0) {
             Map<String, Object> video = new HashMap<>();
             video.put("city", selectedCity);
             video.put("country", selectedCountry);
+            video.put("url", videoUrl);
 
             String latitude = "";
             String longitude = "";
@@ -178,6 +193,8 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
                         public void onSuccess(DocumentReference documentReference) {
                             Log.d("TAG", "DocumentSnapshot written with ID: " + documentReference.getId());
                             // REDIRECT TO SUCCESS PAGE
+                            Intent intent = new Intent(getApplicationContext(), SuccessfulActivity.class);
+                            startActivity(intent);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -188,6 +205,47 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
                     });
         } else {
             // SHOW ERROR
+        }
+    }
+
+    private String getFileType(Uri videoUri) {
+        ContentResolver r = getContentResolver();
+        // get the file type ,in this case its mp4
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(r.getType(videoUri));
+    }
+
+    private void uploadVideo(Uri videoUri) {
+        if (videoUri != null) {
+            // save the selected video in Firebase storage
+            final StorageReference reference = FirebaseStorage.getInstance().getReference("Files/" + System.currentTimeMillis() + "." + getFileType(videoUri));
+            reference.putFile(videoUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    while (!uriTask.isSuccessful()) ;
+                    // get the link of video
+                    String downloadUri = uriTask.getResult().toString();
+                    System.out.println(">>" + uriTask.getResult());
+
+                    // Video uploaded successfully
+                    Toast.makeText(getApplicationContext(), "Video Uploaded!!", Toast.LENGTH_SHORT).show(); //TODO: remove this later
+                    createVideoObject(downloadUri);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Error, Image not uploaded
+                    Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    // show the progress bar
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                    publishButton.setText("Uploading " + (int) progress + "%...");
+                }
+            });
         }
     }
 }
