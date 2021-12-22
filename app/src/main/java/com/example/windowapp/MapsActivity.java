@@ -1,6 +1,7 @@
 package com.example.windowapp;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,6 +14,8 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -21,7 +24,8 @@ public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ArrayList<VideoModel> videos = Store.getInstance().getData();
+        System.out.println("VIDEOS SIZE: "+videos.size());
     }
 
     @Override
@@ -46,14 +50,12 @@ public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCa
     }
 
     private void addPersonItems() {
-        for (int i = 0; i < 3; i++) {
-            mClusterManager.addItem(new VideoModel(-26.187616, 28.079329, "PJ", "https://firebasestorage.googleapis.com/v0/b/windowapp-335316.appspot.com/o/2519717394.mp4?alt=media"));
-            mClusterManager.addItem(new VideoModel(-26.207616, 28.079329, "PJ2", "https://firebasestorage.googleapis.com/v0/b/windowapp-335316.appspot.com/o/2519717394.mp4?alt=media"));
-            mClusterManager.addItem(new VideoModel(-26.217616, 28.079329, "PJ3", "https://firebasestorage.googleapis.com/v0/b/windowapp-335316.appspot.com/o/2519717394.mp4?alt=media"));
-        }
-        mClusterManager.addItem(new VideoModel(-20.217616, 28.079329, "PJ3", "https://firebasestorage.googleapis.com/v0/b/windowapp-335316.appspot.com/o/2519717394.mp4?alt=media"));
-        mClusterManager.addItem(new VideoModel(-20.217616, 28.079329, "PJ3", "https://firebasestorage.googleapis.com/v0/b/windowapp-335316.appspot.com/o/2519717394.mp4?alt=media"));
+        ArrayList<VideoModel> videos = Store.getInstance().getData();
 
+        for(int i = 0; i < videos.size(); i++) {
+            videos.get(i).setmPosition();
+            mClusterManager.addItem(videos.get(i));
+        }
     }
 
     private class RenderClusterInfoWindow extends DefaultClusterRenderer<VideoModel> {

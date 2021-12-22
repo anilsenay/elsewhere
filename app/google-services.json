@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "200867202250",
+    "project_id": "windowapp-335316",
+    "storage_bucket": "windowapp-335316.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:200867202250:android:2cf645879546d7924c6033",
+        "android_client_info": {
+          "package_name": "com.example.windowapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "200867202250-1ujt9hje8ob2egalmk8obm8vhl9fbqf8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjpNZEv1BgeSdr7SkaAgQMpBZuv78gkvA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "200867202250-1ujt9hje8ob2egalmk8obm8vhl9fbqf8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

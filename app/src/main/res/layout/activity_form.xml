@@ -51,6 +51,7 @@
         android:layout_marginBottom="32dp"
         android:background="@drawable/home_button"
         android:backgroundTint="#12CA67"
+        android:onClick="onPublish"
         android:paddingTop="18dp"
         android:paddingBottom="18dp"
         android:text="Publish"

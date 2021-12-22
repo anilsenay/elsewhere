@@ -1,5 +1,6 @@
 package com.example.windowapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -9,16 +10,47 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.VideoView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     AlertDialog alert;
+    ArrayList<VideoModel> videoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        videoList = new ArrayList<>();
+
+        db.collection("Video")
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            VideoModel video = document.toObject(VideoModel.class);
+                            videoList.add(video);
+                        }
+                        System.out.println(">>SIZE: "+videoList.size());
+
+                    } else {
+                        Log.w("Firebase Activity", "Error getting documents.", task.getException());
+                    }
+                }
+            });
 
         VideoView videoview = (VideoView) findViewById(R.id.videoView);
         Uri uri = Uri.parse("android.resource://"+getPackageName()+"/"+R.raw.background_video);
@@ -48,10 +80,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         alert = builder.create();
+
+
     }
 
     public void goMapsActivity(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
+        Store store = Store.getInstance();
+        store.setData(videoList);
         startActivity(intent);
     }
 
