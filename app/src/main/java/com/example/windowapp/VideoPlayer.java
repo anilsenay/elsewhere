@@ -1,23 +1,31 @@
 package com.example.windowapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 
 
 public class VideoPlayer extends AppCompatActivity implements MediaPlayer.OnCompletionListener, Player.Listener {
     //private VideoView videoView;
     ExoPlayer player;
     PlayerView playerView;
+    PlayerControlView playerControlView;
+    //Binding
+    View nextButton;
+    View prevButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,9 +36,34 @@ public class VideoPlayer extends AppCompatActivity implements MediaPlayer.OnComp
 
         player = new ExoPlayer.Builder(this).build();
         playerView = new PlayerView(this);
+        //playerControlView = new PlayerControlView(this);
+
         playerView = (PlayerView) findViewById(R.id.videoView2);
+        playerView.setShowFastForwardButton(false);
+        playerView.setShowRewindButton(false);
+        playerView.setShowNextButton(false);
+        playerView.setShowPreviousButton(false);
+
+        nextButton = findViewById(R.id.exo_next);
+        prevButton = findViewById(R.id.exo_prev);
+        //nextButton.setOnClickListener(v -> player.seekForward());
+       // prevButton.setOnClickListener(v -> player.seekBack());
+        //playerControlView.setPlayer(player);
+
+
+
+        playerView.setContentDescription("Los Angeles, USA");
+        playerView.setBackgroundColor(Color.BLACK);
         playRandomEP();
 
+    }
+
+    public void onNextButtonClick(View view) {
+        player.seekToNext();
+    }
+
+    public void onPrevButtonClick(View view) {
+        player.seekToPrevious();
     }
 
     public void playRandomVideo() {
@@ -80,5 +113,6 @@ public class VideoPlayer extends AppCompatActivity implements MediaPlayer.OnComp
             returnToMainActivity();
         }
     }
+
 
 }
