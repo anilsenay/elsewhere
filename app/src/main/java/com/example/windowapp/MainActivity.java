@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to exit?")
+        builder.setMessage("Select video resource")
                 .setCancelable(false)
                 .setPositiveButton("Select From Gallery", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
