@@ -149,6 +149,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void onPublish(View view) {
+
         uploadVideo(selectedVideo);
     }
 

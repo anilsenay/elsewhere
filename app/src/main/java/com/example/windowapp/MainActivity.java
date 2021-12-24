@@ -2,10 +2,13 @@ package com.example.windowapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     AlertDialog alert;
     ArrayList<VideoModel> videoList;
+    VideoView videoview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,24 +39,59 @@ public class MainActivity extends AppCompatActivity {
         videoList = new ArrayList<>();
 
         db.collection("Video")
-            .get()
-            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            VideoModel video = document.toObject(VideoModel.class);
-                            videoList.add(video);
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                VideoModel video = document.toObject(VideoModel.class);
+                                videoList.add(video);
+                            }
+                            System.out.println(">>SIZE: " + videoList.size());
+
+                        } else {
+                            Log.w("Firebase Activity", "Error getting documents.", task.getException());
                         }
-                        System.out.println(">>SIZE: "+videoList.size());
-
-                    } else {
-                        Log.w("Firebase Activity", "Error getting documents.", task.getException());
                     }
-                }
-            });
+                });
 
-        VideoView videoview = (VideoView) findViewById(R.id.videoView);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Select video resource")
+                .setCancelable(false)
+                .setPositiveButton("Select From Gallery", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                                MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(pickPhoto, 1);
+                    }
+                })
+                .setNegativeButton("Record Video", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //checkPermission();
+                        Intent takePicture = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                        startActivityForResult(takePicture, 0);
+                    }
+                });
+        alert = builder.create();
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        playBackgroundVideo();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        videoview.stopPlayback();
+    }
+
+    public void playBackgroundVideo() {
+        videoview = (VideoView) findViewById(R.id.videoView);
         Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background_video);
         videoview.setVideoURI(uri);
         videoview.start();
@@ -62,26 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 mp.setLooping(true);
             }
         });
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Select video resource")
-                .setCancelable(false)
-                .setPositiveButton("Select From Gallery", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(pickPhoto , 1);
-                    }
-                })
-                .setNegativeButton("Record Video", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent takePicture = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                        startActivityForResult(takePicture, 0);
-                    }
-                });
-        alert = builder.create();
-
-
     }
 
     public void goMapsActivity(View view) {
@@ -95,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    public void goPublishActivity( Uri selectedVideo) {
+    public void goPublishActivity(Uri selectedVideo) {
         Intent intent = new Intent(this, FormActivity.class);
         intent.putExtra("SELECTED_VIDEO", selectedVideo);
         startActivity(intent);
@@ -107,22 +126,23 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, 5);
     }
+
     // startActivityForResult is used to receive the result, which is the selected video.
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        switch(requestCode) {
+        switch (requestCode) {
             case 0:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     Uri selectedVideo = imageReturnedIntent.getData();
-                    System.out.println("0 "+selectedVideo);
+                    System.out.println("0 " + selectedVideo);
                     goPublishActivity(selectedVideo);
                 }
 
                 break;
             case 1:
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
                     Uri selectedVideo = imageReturnedIntent.getData();
-                    System.out.println("1 "+selectedVideo);
+                    System.out.println("1 " + selectedVideo);
                     goPublishActivity(selectedVideo);
                 }
                 break;
@@ -136,5 +156,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(startVideoPlayer);
     }
 
+    public void checkPermission(String permission, int requestCode) {
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+        }
+    }
 
 }

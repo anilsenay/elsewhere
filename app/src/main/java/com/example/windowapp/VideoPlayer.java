@@ -1,6 +1,7 @@
 package com.example.windowapp;
 
 import android.content.Intent;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class VideoPlayer extends AppCompatActivity {
+public class VideoPlayer extends AppCompatActivity implements Player.Listener{
 
     ExoPlayer player;
     PlayerView playerView;
@@ -72,6 +73,7 @@ public class VideoPlayer extends AppCompatActivity {
         else
             player.setMediaItems(getPlaylist());
 
+        player.addListener(this);
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.setShuffleModeEnabled(true);
     }
@@ -83,15 +85,17 @@ public class VideoPlayer extends AppCompatActivity {
 
     public void playRandomVideo() {
         player.prepare();
+        setLocationText(player
+                .getCurrentMediaItem());
+        player.setPlayWhenReady(true);
+    }
 
+    private void setLocationText(MediaItem mediaItem) {
         locationText.setText(videoLocationMap
                 .get(Objects.requireNonNull(Objects
-                        .requireNonNull(player
-                                .getCurrentMediaItem())
+                        .requireNonNull(mediaItem)
                         .mediaMetadata.mediaUri)
                         .toString()));
-
-        player.setPlayWhenReady(true);
     }
 
     public List<MediaItem> getPlaylist() {
@@ -165,4 +169,8 @@ public class VideoPlayer extends AppCompatActivity {
         startActivity(intentMain);
     }
 
+    @Override
+    public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+        setLocationText(mediaItem);
+    }
 }
