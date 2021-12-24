@@ -180,8 +180,8 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             }
 
-            video.put("latitude", latitude);
-            video.put("longitude", longitude);
+            video.put("latitude", Double.parseDouble(latitude));
+            video.put("longitude", Double.parseDouble(longitude));
 
             System.out.println("video: " + video);
 

@@ -129,16 +129,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    public void randomWindowsButton() {
-//        Button button = (Button) findViewById(R.id.button2);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//
-//            }
-//        });
-//    }
     public void randomVideo(View view) {
         Intent startVideoPlayer = new Intent(this, VideoPlayer.class);
+        Store store = Store.getInstance();
+        store.setData(videoList);
         startActivity(startVideoPlayer);
     }
 
