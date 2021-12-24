@@ -78,10 +78,7 @@ public class VideoPlayer extends AppCompatActivity {
 
     private void preparePlayerView() {
         playerView.setPlayer(player);
-        playerView.setShowFastForwardButton(false);
-        playerView.setShowRewindButton(false);
-        playerView.setShowNextButton(false);
-        playerView.setShowPreviousButton(false);
+        playerView.setUseController(false);
     }
 
     public void playRandomVideo() {
