@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
@@ -31,6 +34,10 @@ public class VideoPlayer extends AppCompatActivity implements Player.Listener{
     ArrayList<String> videoUrlList;
     HashMap<String, String> videoLocationMap;
     boolean isComingFromIntent;
+    ImageButton playButton;
+    ImageButton pauseButton;
+    ConstraintLayout buttonsContainer;
+    Handler handler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +51,11 @@ public class VideoPlayer extends AppCompatActivity implements Player.Listener{
         isComingFromIntent = getIntent().hasExtra("ITEMS");
         prepareVideoList();
         videoLocationMap = new HashMap<>();
+
+        playButton = findViewById(R.id.playButton);
+        pauseButton = findViewById(R.id.pauseButton);
+        buttonsContainer = findViewById(R.id.buttons);
+        handler = new Handler();
 
         preparePlayer();
         preparePlayerView();
@@ -156,11 +168,40 @@ public class VideoPlayer extends AppCompatActivity implements Player.Listener{
     }
 
     public void onNextButtonClick(View view) {
+        onButtonsContainerClick(view);
         player.seekToNext();
     }
 
     public void onPrevButtonClick(View view) {
+        onButtonsContainerClick(view);
         player.seekToPrevious();
+    }
+
+    public void onPauseButtonClick(View view) {
+        onButtonsContainerClick(view);
+        player.pause();
+        pauseButton.setVisibility(View.GONE);
+        playButton.setVisibility(View.VISIBLE);
+    }
+
+    public void onStartButtonClick(View view) {
+        onButtonsContainerClick(view);
+        player.play();
+        playButton.setVisibility(View.GONE);
+        pauseButton.setVisibility(View.VISIBLE);
+    }
+
+    Runnable hideButtonsContainer = new Runnable() {
+        @Override
+        public void run() {
+            buttonsContainer.setAlpha(0);
+        }
+    };
+
+    public void onButtonsContainerClick(View view) {
+        handler.removeCallbacks(hideButtonsContainer);
+        buttonsContainer.setAlpha(1);
+        handler.postDelayed(hideButtonsContainer, 3000);
     }
 
     public void onMenuButtonClick(View view) {

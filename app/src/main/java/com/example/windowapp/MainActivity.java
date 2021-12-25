@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         videoList = new ArrayList<>();
 
         db.collection("Video")
+                .whereEqualTo("isActive", true)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goMapsActivity(View view) {
+        if(videoList.size() == 0) return;
         Intent intent = new Intent(this, MapsActivity.class);
         Store store = Store.getInstance();
         store.setData(videoList);
@@ -150,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void randomVideo(View view) {
+        if(videoList.size() == 0) return;
         Intent startVideoPlayer = new Intent(this, VideoPlayer.class);
         Store store = Store.getInstance();
         store.setData(videoList);
