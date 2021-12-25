@@ -7,6 +7,25 @@
     android:background="#ffffff"
     tools:context=".SuccessfulActivity">
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animationView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_url="https://assets7.lottiefiles.com/packages/lf20_uemoq57r.json"
+            tools:ignore="MissingConstraints"
+            />
+
+    </LinearLayout>
+
+
+
     <Button
         android:id="@+id/publishButton"
         android:layout_width="match_parent"
@@ -40,7 +59,10 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/publishButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.798" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
