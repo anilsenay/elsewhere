@@ -1,8 +1,16 @@
 package com.example.windowapp;
 
+import static java.util.stream.Collectors.toMap;
+
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,7 +22,12 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
+import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCallback {
 
@@ -39,6 +52,11 @@ public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCa
         mClusterManager.setOnClusterClickListener(item -> {
             // Listen for clicks on a cluster here
             System.out.println("items: " + item.getItems());
+
+
+            Intent intentVideoPlayer = new Intent(this, VideoPlayer.class);
+            intentVideoPlayer.putStringArrayListExtra("ITEMS", getVideoURLs(item.getItems()));
+            startActivity(intentVideoPlayer);
             return false;
         });
 
@@ -47,6 +65,17 @@ public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCa
         googleMap.setOnInfoWindowClickListener(mClusterManager);
         addPersonItems();
         mClusterManager.cluster();
+    }
+
+
+    private ArrayList<String> getVideoURLs(Collection<VideoModel> items) {
+        ArrayList<String> urlList = new ArrayList<>();
+
+        for (VideoModel video : items) {
+            urlList.add(video.getUrl());
+        }
+
+        return urlList;
     }
 
     private void addPersonItems() {
@@ -58,7 +87,9 @@ public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCa
         }
     }
 
-    private class RenderClusterInfoWindow extends DefaultClusterRenderer<VideoModel> {
+
+
+    private class RenderClusterInfoWindow extends DefaultClusterRenderer<VideoModel> implements Serializable{
 
         public RenderClusterInfoWindow(GoogleMap map, ClusterManager<VideoModel> clusterManager) {
             super(getApplicationContext(), map, clusterManager);

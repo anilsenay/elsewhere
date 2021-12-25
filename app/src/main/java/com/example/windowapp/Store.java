@@ -19,4 +19,12 @@ public class Store {
     public void addData(VideoModel s) {
         this.s.add(s);
     }
+
+    public VideoModel getVideoFromUrl(String url) {
+        for (VideoModel video: s) {
+            if (url.equals(video.getUrl()))
+                return video;
+        }
+        return null;
+    }
 }

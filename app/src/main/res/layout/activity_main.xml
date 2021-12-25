@@ -62,6 +62,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/home_button"
                 android:backgroundTint="#FFFFFF"
+                android:onClick="randomVideo"
                 android:paddingTop="18dp"
                 android:paddingBottom="18dp"
                 android:text="Random Windows"
