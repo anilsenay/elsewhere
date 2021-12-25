@@ -20,8 +20,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,7 +29,6 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +51,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
-        publishButton = (Button) findViewById(R.id.publishButton);
+        publishButton = (Button) findViewById(R.id.goBackButton);
 
         Spinner countrySpinner = findViewById(R.id.countrySpinner);
         countrySpinner.setOnItemSelectedListener(this);
@@ -196,6 +193,7 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
                             // REDIRECT TO SUCCESS PAGE
                             Intent intent = new Intent(getApplicationContext(), SuccessfulActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
