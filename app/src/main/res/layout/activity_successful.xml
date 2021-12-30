@@ -27,7 +27,7 @@
 
 
     <Button
-        android:id="@+id/publishButton"
+        android:id="@+id/goBackButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -41,6 +41,7 @@
         android:textAllCaps="false"
         android:textColor="#ffffff"
         android:textSize="24sp"
+        android:onClick="onGoBackButtonClick"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
