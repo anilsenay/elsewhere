@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                                 VideoModel video = document.toObject(VideoModel.class);
                                 videoList.add(video);
                             }
-                            System.out.println(">>SIZE: " + videoList.size());
+
 
                         } else {
                             Log.w("Firebase Activity", "Error getting documents.", task.getException());
@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK) {
             Uri selectedVideo = imageReturnedIntent.getData();
-            System.out.println("0 " + selectedVideo);
             goPublishActivity(selectedVideo);
         }
     }

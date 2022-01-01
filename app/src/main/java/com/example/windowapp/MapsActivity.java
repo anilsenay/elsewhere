@@ -2,6 +2,7 @@ package com.example.windowapp;
 
 import static java.util.stream.Collectors.toMap;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -38,21 +39,18 @@ public class MapsActivity extends BaseGoogleMapsActivity implements OnMapReadyCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ArrayList<VideoModel> videos = Store.getInstance().getData();
-        System.out.println("VIDEOS SIZE: "+videos.size());
     }
 
+    @SuppressLint("PotentialBehaviorOverride")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         setupMap(googleMap);
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-26.167616, 28.079329), 10));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(41.0082, 28.9784), 10));
 
         mClusterManager = new ClusterManager<>(this, googleMap);
         mClusterManager.setRenderer(new RenderClusterInfoWindow(googleMap, mClusterManager));
 
         mClusterManager.setOnClusterClickListener(item -> {
-            // Listen for clicks on a cluster here
-            System.out.println("items: " + item.getItems());
-
 
             Intent intentVideoPlayer = new Intent(this, VideoPlayer.class);
             intentVideoPlayer.putStringArrayListExtra("ITEMS", getVideoURLs(item.getItems()));

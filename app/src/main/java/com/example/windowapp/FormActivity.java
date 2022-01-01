@@ -90,7 +90,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
         citySpinner.setAdapter(cityAdapter);
 
         selectedVideo = (Uri) getIntent().getExtras().get("SELECTED_VIDEO");
-        System.out.println(selectedVideo);
 
     }
 
@@ -181,7 +180,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
             video.put("latitude", Double.parseDouble(latitude));
             video.put("longitude", Double.parseDouble(longitude));
 
-            System.out.println("video: " + video);
 
             // POST TO FIREBASE
             db.collection("Video")
@@ -225,7 +223,6 @@ public class FormActivity extends AppCompatActivity implements AdapterView.OnIte
                     while (!uriTask.isSuccessful()) ;
                     // get the link of video
                     String downloadUri = uriTask.getResult().toString();
-                    System.out.println(">>" + uriTask.getResult());
 
                     // Video uploaded successfully
                     Toast.makeText(getApplicationContext(), "Video Uploaded!!", Toast.LENGTH_SHORT).show(); //TODO: remove this later
